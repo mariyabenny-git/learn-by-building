@@ -1192,28 +1192,37 @@
         modalProjectDisplay.dataset.project = projectKey;
       }
       modalOverlay.classList.add('visible');
+      clearModalStatus();
       inputRepo.focus();
     });
 
     modalClose.addEventListener('click', () => {
       modalOverlay.classList.remove('visible');
+      clearModalStatus();
     });
 
     modalOverlay.addEventListener('click', (e) => {
       if (e.target === modalOverlay) {
         modalOverlay.classList.remove('visible');
+        clearModalStatus();
       }
     });
 
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && modalOverlay.classList.contains('visible')) {
         modalOverlay.classList.remove('visible');
+        clearModalStatus();
       }
     });
 
     function modalShowStatus(type, message) {
       modalSubmitStatus.className = `submit-status visible ${type}`;
       modalSubmitStatus.textContent = message;
+    }
+
+    function clearModalStatus() {
+      modalSubmitStatus.className = 'submit-status';
+      modalSubmitStatus.textContent = '';
     }
 
     modalSubmitBtn.addEventListener('click', async () => {
