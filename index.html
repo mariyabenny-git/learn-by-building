@@ -1387,7 +1387,10 @@
         renderTable(allEntries);
       } else {
         // For specific project, filter entries that have a score for that project
-        const filtered = allEntries.filter(e => e[activeFilter + '_score'] > 0);
+        const filtered = allEntries.filter(e => {
+          const projectScores = typeof e.project_scores === 'string' ? JSON.parse(e.project_scores) : e.project_scores;
+          return projectScores[activeFilter] > 0;
+        });
         renderTable(filtered);
       }
     }
