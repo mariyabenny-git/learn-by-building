@@ -1,0 +1,62 @@
+name: Validate Submission
+
+on:
+  repository_dispatch:
+    types: [validate-submission]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout validator scripts
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install validator dependencies
+        run: |
+          cd .github/validator
+          npm ci
+
+      - name: Clone submitted repo
+        run: |
+          REPO_URL="${{ github.event.client_payload.repo_url }}"
+          # Strip trailing slash, ensure it's a github.com URL
+          if [[ ! "$REPO_URL" =~ ^https://github\.com/[a-zA-Z0-9_.-]+/[a-zA-Z0-9_.-]+$ ]]; then
+            echo "Invalid repo URL format"
+            exit 1
+          fi
+          git clone --depth=1 "$REPO_URL" /tmp/submitted-repo
+        env:
+          GIT_TERMINAL_PROMPT: "0"
+
+      - name: Run validator
+        id: validator
+        run: |
+          node .github/validator/index.js \
+            --submission-id "${{ github.event.client_payload.submission_id }}" \
+            --username "${{ github.event.client_payload.github_username }}" \
+            --project-type "${{ github.event.client_payload.project_type }}" \
+            --repo-path "/tmp/submitted-repo" \
+            --output "/tmp/result.json"
+
+      - name: Send result to Supabase
+        if: always()
+        run: |
+          node .github/validator/send-result.js \
+            --result-file "/tmp/result.json" \
+            --submission-id "${{ github.event.client_payload.submission_id }}" \
+            --username "${{ github.event.client_payload.github_username }}" \
+            --project-type "${{ github.event.client_payload.project_type }}"
+        env:
+          SUPABASE_RESULT_URL: ${{ secrets.SUPABASE_URL }}
+          WEBHOOK_SECRET: ${{ secrets.WEBHOOK_SECRET }}
+
+      - name: Cleanup
+        if: always()
+        run: rm -rf /tmp/submitted-repo /tmp/result.json

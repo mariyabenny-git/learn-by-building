@@ -1,0 +1,14 @@
+{
+  "name": "learn-by-building-validator",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Validator scripts for Learn by Building platform",
+  "main": "index.js",
+  "scripts": {
+    "test": "node index.js --help"
+  },
+  "dependencies": {
+    "node-fetch": "^3.3.2"
+  }
+}
