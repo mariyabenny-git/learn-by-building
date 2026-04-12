@@ -1309,47 +1309,84 @@
         return;
       }
 
-      const rows = entries.map((e, i) => {
-        const displayRank = activeFilter === 'all' ? e.rank : i + 1;
-        const pct         = Math.round((e.total_score / 115) * 100);
-        const barColor    = e.total_score >= 90 ? 'var(--green)' : e.total_score >= 60 ? 'var(--accent)' : 'var(--yellow)';
+      if (activeFilter === 'all') {
+        // Aggregated view - one row per user with combined scores
+        const rows = entries.map((e, i) => {
+          const displayRank = i + 1;
+          const pct = Math.round((e.total_score / (Object.keys(e.project_scores).length * 115)) * 100);
+          const barColor = pct >= 80 ? 'var(--green)' : pct >= 50 ? 'var(--accent)' : 'var(--yellow)';
 
-        return `<tr>
-          <td>${getRankBadge(displayRank)}</td>
-          <td><span class="lb-username">${escapeHtml(e.masked_username)}</span></td>
-          <td><span class="lb-project ${escapeHtml(e.project_type)}">${escapeHtml(e.project_type)}</span></td>
-          <td>
-            <span class="lb-score">
-              ${escapeHtml(String(e.total_score))}
-              ${e.bonus_score > 0 ? `<span class="bonus-pts">+${escapeHtml(String(e.bonus_score))} bonus</span>` : ''}
-            </span>
-          </td>
-          <td>
-            <div class="score-bar-wrap">
-              <div class="score-bar" style="width:${pct}%;background:${barColor}"></div>
-            </div>
-          </td>
-          <td><span class="lb-date">${formatDate(e.validated_at)}</span></td>
-        </tr>`;
-      }).join('');
+          const projectBadges = Object.entries(e.project_scores).map(([project, score]) => 
+            '<span class="lb-project ' + project + '">' + project.charAt(0).toUpperCase() + project.slice(1) + ': ' + score + '</span>'
+          );
 
-      container.innerHTML = `
-        <table class="lb-table">
-          <thead>
-            <tr>
-              <th>Rank</th><th>Username</th><th>Project</th>
-              <th>Score</th><th>Progress</th><th>Date</th>
-            </tr>
-          </thead>
-          <tbody>${rows}</tbody>
-        </table>`;
+          return `<tr>
+            <td>${getRankBadge(displayRank)}</td>
+            <td><span class="lb-username">${escapeHtml(e.masked_username)}</span></td>
+            <td>${projectBadges.join(' ')}</td>
+            <td><span class="lb-score">${escapeHtml(String(e.total_score))}</span></td>
+            <td>
+              <div class="score-bar-wrap">
+                <div class="score-bar" style="width:${pct}%;background:${barColor}"></div>
+              </div>
+            </td>
+            <td><span class="lb-date">${formatDate(e.validated_at)}</span></td>
+          </tr>`;
+        }).join('');
+
+        container.innerHTML = `
+          <table class="lb-table">
+            <thead>
+              <tr>
+                <th>Rank</th><th>Username</th><th>Projects</th>
+                <th>Total Score</th><th>Progress</th><th>Date</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>`;
+      } else {
+        // Specific project - show that project's score
+        const rows = entries.map((e, i) => {
+          const displayRank = i + 1;
+          const projectScore = e.project_scores[activeFilter] || 0;
+          const pct = Math.round((projectScore / 115) * 100);
+          const barColor = projectScore >= 90 ? 'var(--green)' : projectScore >= 60 ? 'var(--accent)' : 'var(--yellow)';
+
+          return `<tr>
+            <td>${getRankBadge(displayRank)}</td>
+            <td><span class="lb-username">${escapeHtml(e.masked_username)}</span></td>
+            <td><span class="lb-project ${activeFilter}">${activeFilter}</span></td>
+            <td><span class="lb-score">${projectScore}</span></td>
+            <td>
+              <div class="score-bar-wrap">
+                <div class="score-bar" style="width:${pct}%;background:${barColor}"></div>
+              </div>
+            </td>
+            <td><span class="lb-date">${formatDate(e.validated_at)}</span></td>
+          </tr>`;
+        }).join('');
+
+        container.innerHTML = `
+          <table class="lb-table">
+            <thead>
+              <tr>
+                <th>Rank</th><th>Username</th><th>Project</th>
+                <th>Score</th><th>Progress</th><th>Date</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>`;
+      }
     }
 
     function applyFilter() {
-      const filtered = activeFilter === 'all'
-        ? allEntries
-        : allEntries.filter(e => e.project_type === activeFilter);
-      renderTable(filtered);
+      if (activeFilter === 'all') {
+        renderTable(allEntries);
+      } else {
+        // For specific project, filter entries that have a score for that project
+        const filtered = allEntries.filter(e => e[activeFilter + '_score'] > 0);
+        renderTable(filtered);
+      }
     }
 
     async function fetchLeaderboard() {
