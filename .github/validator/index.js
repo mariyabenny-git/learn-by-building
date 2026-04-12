@@ -4,6 +4,8 @@
 
 import { writeFileSync } from "fs";
 import { validatePortfolio } from "./validators/portfolio.js";
+import { validateRecipe } from "./validators/recipe.js";
+import { validateQuiz } from "./validators/quiz.js";
 
 const args = process.argv.slice(2);
 
@@ -26,8 +28,8 @@ if (!submissionId || !username || !projectType || !repoPath || !outputFile) {
 
 const validators = {
   portfolio: validatePortfolio,
-  // recipe: validateRecipe,   // future
-  // quiz: validateQuiz,       // future
+  recipe:   validateRecipe,
+  quiz:     validateQuiz,
 };
 
 const validator = validators[projectType];
