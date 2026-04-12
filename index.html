@@ -1193,18 +1193,21 @@
       }
       modalOverlay.classList.add('visible');
       clearModalStatus();
+      clearModalInputs();
       inputRepo.focus();
     });
 
     modalClose.addEventListener('click', () => {
       modalOverlay.classList.remove('visible');
       clearModalStatus();
+      clearModalInputs();
     });
 
     modalOverlay.addEventListener('click', (e) => {
       if (e.target === modalOverlay) {
         modalOverlay.classList.remove('visible');
         clearModalStatus();
+        clearModalInputs();
       }
     });
 
@@ -1212,6 +1215,7 @@
       if (e.key === 'Escape' && modalOverlay.classList.contains('visible')) {
         modalOverlay.classList.remove('visible');
         clearModalStatus();
+        clearModalInputs();
       }
     });
 
@@ -1223,6 +1227,13 @@
     function clearModalStatus() {
       modalSubmitStatus.className = 'submit-status';
       modalSubmitStatus.textContent = '';
+    }
+
+    function clearModalInputs() {
+      inputRepo.value = '';
+      extractedUsername = null;
+      showExtractedUser('', '');
+      modalSubmitBtn.disabled = true;
     }
 
     modalSubmitBtn.addEventListener('click', async () => {
