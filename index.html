@@ -1313,10 +1313,12 @@
         // Aggregated view - one row per user with combined scores
         const rows = entries.map((e, i) => {
           const displayRank = i + 1;
-          const pct = Math.round((e.total_score / (Object.keys(e.project_scores).length * 115)) * 100);
+          const projectScores = typeof e.project_scores === 'string' ? JSON.parse(e.project_scores) : e.project_scores;
+          const projectCount = Object.keys(projectScores).length;
+          const pct = Math.round((e.total_score / (projectCount * 115)) * 100);
           const barColor = pct >= 80 ? 'var(--green)' : pct >= 50 ? 'var(--accent)' : 'var(--yellow)';
 
-          const projectBadges = Object.entries(e.project_scores).map(([project, score]) => 
+          const projectBadges = Object.entries(projectScores).map(([project, score]) => 
             '<span class="lb-project ' + project + '">' + project.charAt(0).toUpperCase() + project.slice(1) + ': ' + score + '</span>'
           );
 
@@ -1348,7 +1350,8 @@
         // Specific project - show that project's score
         const rows = entries.map((e, i) => {
           const displayRank = i + 1;
-          const projectScore = e.project_scores[activeFilter] || 0;
+          const projectScores = typeof e.project_scores === 'string' ? JSON.parse(e.project_scores) : e.project_scores;
+          const projectScore = projectScores[activeFilter] || 0;
           const pct = Math.round((projectScore / 115) * 100);
           const barColor = projectScore >= 90 ? 'var(--green)' : projectScore >= 60 ? 'var(--accent)' : 'var(--yellow)';
 
