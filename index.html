@@ -1435,3 +1435,98 @@
 
 </body>
 </html>
+.score-bar-wrap {
+  background: var(--border);
+}
+.score-bar-wrap {
+  width: 80px;
+  height: 5px;
+  background: rgba(255,255,255,0.08); /* lighter contrast */
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.score-bar {
+  height: 100%;
+  border-radius: 3px;
+  box-shadow: 0 0 6px rgba(88,166,255,0.4); /* glow effect */
+}
+function formatDate(iso) {
+  const d = new Date(iso);
+  return d.toLocaleDateString('en-GB', {
+    day: '2-digit',
+    month: 'short'
+  });
+}
+.lb-table tbody tr {
+  transition: all 0.15s ease;
+}
+
+.lb-table tbody tr:hover {
+  background: var(--surface-hover);
+  transform: translateX(4px);
+  box-shadow: inset 2px 0 0 var(--accent);
+}
+.lb-project {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  opacity: 0.9;
+}
+.lb-score {
+  font-family: var(--mono);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+}
+const projectBadges = Object.keys(projectNames).map(project => {
+  const score = projectScores[project];
+
+  if (!score) {
+    return `<span class="lb-project" style="opacity:0.4;">${project}: Not Started</span>`;
+  }
+
+  return `<span class="lb-project ${project}">${project}: ${score}</span>`;
+});
+.lb-table-wrap::-webkit-scrollbar {
+  width: 6px;
+}
+.lb-table-wrap::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+.lb-table-wrap::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+allEntries.sort((a, b) => b.total_score - a.total_score);
+<span class="lb-score" data-tooltip="UI: 40 | Logic: 39 | Prof: 20 | Opt: 10">
+  ${e.total_score}
+</span>
+.lb-score {
+  position: relative;
+  cursor: help;
+}
+
+.lb-score::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 130%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 0.3rem 0.6rem;
+  font-size: 0.7rem;
+  border-radius: 4px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+
+.lb-score:hover::after {
+  opacity: 1;
+}
