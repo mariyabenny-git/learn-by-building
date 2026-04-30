@@ -1,13 +1,8 @@
 {
-  "name": "learn-by-building-validator",
-  "version": "1.0.0",
-  "private": true,
+  "name": "lbb-validator",
+  "version": "1.2.0",
   "type": "module",
-  "description": "Validator scripts for Learn by Building platform",
-  "main": "index.js",
-  "scripts": {
-    "test": "node index.js --help"
-  },
+  "private": true,
   "dependencies": {
     "node-fetch": "^3.3.2"
   }
