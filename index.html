@@ -3,73 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Learn By Building | Validator Dashboard</title>
-    <link rel="stylesheet" href="style.css">
+    <title>LBB | Project Validator</title>
+    <style>
+        :root { --bg: #0d1117; --card: #161b22; --border: #30363d; --text: #c9d1d9; --accent: #58a6ff; }
+        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; line-height: 1.6; }
+        .container { max-width: 1100px; margin: 2rem auto; padding: 0 1rem; }
+        
+        /* Nav & Layout */
+        .nav { display: flex; gap: 1.5rem; margin-bottom: 2.5rem; border-bottom: 1px solid var(--border); }
+        .nav-btn { background: none; border: none; color: #8b949e; padding: 10px 5px; cursor: pointer; font-size: 1rem; }
+        .nav-btn.active { color: white; border-bottom: 2px solid var(--accent); font-weight: bold; }
+
+        /* Bento Grid */
+        .bento-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; }
+        .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        
+        /* Forms & Inputs */
+        .input-group { margin-bottom: 1.5rem; }
+        label { display: block; margin-bottom: 8px; font-size: 0.85rem; color: #8b949e; }
+        input { width: 100%; background: #010409; border: 1px solid var(--border); color: white; padding: 12px; border-radius: 6px; box-sizing: border-box; outline: none; }
+        input:focus { border-color: var(--accent); }
+        
+        button.primary { width: 100%; background: var(--accent); color: white; padding: 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        button.secondary { background: #21262d; border: 1px solid var(--border); color: var(--accent); padding: 8px 12px; border-radius: 6px; cursor: pointer; margin-top: 10px; font-size: 0.8rem; }
+
+        /* Score Criteria Table */
+        .criteria-list { list-style: none; padding: 0; }
+        .criteria-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #21262d; }
+        .criteria-pts { color: var(--accent); font-weight: bold; }
+    </style>
 </head>
 <body>
-    <nav class="glass-nav">
-        <div class="logo">LBB.<span>Validator</span></div>
-        <div class="nav-links">
-            <button class="top-tab active" data-tab="beginner">Projects</button>
-            <button class="top-tab" data-tab="leaderboard">Leaderboard</button>
-        </div>
-    </nav>
+    <div class="container">
+        <nav class="nav">
+            <button class="nav-btn active" id="btn-submit" onclick="showTab('submit')">Submission</button>
+            <button class="nav-btn" id="btn-lb" onclick="showTab('leaderboard')">Leaderboard</button>
+        </nav>
 
-    <main class="container">
-        <!-- Project Panel -->
-        <section id="project-panel">
-            <div class="project-grid">
-                <div class="project-card" onclick="app.loadTopic('portfolio')">
-                    <h3>Portfolio Website</h3>
-                    <p>Build a modern personal site.</p>
-                    <div id="tips-portfolio" class="tip-box"></div>
-                </div>
-                <div class="project-card" onclick="app.loadTopic('recipe')">
-                    <h3>Recipe App</h3>
-                    <p>Create a dynamic ingredient manager.</p>
-                    <div id="tips-recipe" class="tip-box"></div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Leaderboard Panel -->
-        <section id="leaderboard-panel" style="display: none;">
+        <section id="view-submit">
             <div class="bento-grid">
-                <!-- Main Leaderboard -->
-                <div class="bento-item lb-main">
-                    <header class="lb-header">
-                        <h2>Top Performers</h2>
-                        <button class="btn-refresh" onclick="app.syncData()">Sync Results</button>
-                    </header>
-                    <div id="lb-container">
-                        <!-- Data injected by script.js -->
+                <div class="card">
+                    <h3>Deploy Validator</h3>
+                    <div class="input-group">
+                        <label>GitHub Pages Link</label>
+                        <input type="text" id="live-url" placeholder="https://username.github.io/repo/">
+                        <button class="secondary" onclick="convertLink()">Auto-Convert to Repo URL</button>
                     </div>
+                    <div class="input-group">
+                        <label>Repository URL (ReadOnly)</label>
+                        <input type="text" id="repo-url" readonly>
+                    </div>
+                    <button class="primary" onclick="dispatchWorkflow()">Submit Project</button>
                 </div>
-
-                <!-- Score Criteria (Replaced General Tips) -->
-                <div class="bento-item lb-sidebar">
-                    <h3>📊 Scoring Logic</h3>
-                    <div class="criteria-item">
-                        <span class="dot gold"></span>
-                        <div><strong>Base Setup (40 pts)</strong><p>Valid profile.json structure.</p></div>
-                    </div>
-                    <div class="criteria-item">
-                        <span class="dot blue"></span>
-                        <div><strong>Tech Stack (30 pts)</strong><p>3+ core engineering skills.</p></div>
-                    </div>
-                    <div class="criteria-item">
-                        <span class="dot green"></span>
-                        <div><strong>UI/UX (10 pts)</strong><p>Dark/Bento theme choice.</p></div>
-                    </div>
-                    <div class="criteria-item">
-                        <span class="dot purple"></span>
-                        <div><strong>Consistency (20 pts)</strong><p>100+ GitHub commit streak.</p></div>
+                <div class="card">
+                    <h3>Tips & Best Practices</h3>
+                    <div id="tips-box" style="font-size: 0.9rem; color: #8b949e;">
+                        Select a project type to see specific coding guidelines for your <strong>profile.json</strong>.
                     </div>
                 </div>
             </div>
         </section>
-    </main>
 
-    <script type="module" src="script.js"></script>
+        <section id="view-leaderboard" style="display:none;">
+            <div class="bento-grid">
+                <div class="card">
+                    <h3>Global Rankings</h3>
+                    <div id="lb-content">Synchronizing with Supabase API...</div>
+                </div>
+                <div class="card">
+                    <h3>📊 Score Breakdown</h3>
+                    <div class="criteria-list">
+                        <div class="criteria-item"><span>Base Schema Valid</span> <span class="criteria-pts">+40</span></div>
+                        <div class="criteria-item"><span>3+ Skills Listed</span> <span class="criteria-pts">+30</span></div>
+                        <div class="criteria-item"><span>UI/UX Theme Match</span> <span class="criteria-pts">+10</span></div>
+                        <div class="criteria-item"><span>100+ Day Streak</span> <span class="criteria-pts">+20</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        function showTab(tab) {
+            document.getElementById('view-submit').style.display = tab === 'submit' ? 'block' : 'none';
+            document.getElementById('view-leaderboard').style.display = tab === 'leaderboard' ? 'block' : 'none';
+            document.getElementById('btn-submit').classList.toggle('active', tab === 'submit');
+            document.getElementById('btn-lb').classList.toggle('active', tab === 'leaderboard');
+        }
+
+        function convertLink() {
+            const live = document.getElementById('live-url').value.trim();
+            try {
+                const url = new URL(live);
+                const username = url.hostname.split('.')[0];
+                const repo = url.pathname.split('/').filter(p => p)[0];
+                if (username && repo) {
+                    document.getElementById('repo-url').value = `https://github.com/${username}/${repo}`;
+                }
+            } catch (e) { alert("Invalid GitHub Pages URL format."); }
+        }
+
+        async function dispatchWorkflow() {
+            console.log("Dispatching to GitHub Actions...");
+            // Logic to trigger repository_dispatch payload
+        }
+    </script>
 </body>
 </html>
