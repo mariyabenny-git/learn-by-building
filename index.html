@@ -285,22 +285,32 @@
     .bonus li { padding: 0.2rem 0; color: var(--text-muted); }
     .bonus li::before { content: '★ '; color: var(--purple); }
 
+    /* ── Tips Styling ── */
     .tips {
       margin-top: 2.5rem;
-      padding-top: 1.5rem;
-      border-top: 1px solid var(--border);
+      padding: 1.5rem;
+      border: 1px dashed var(--border);
+      border-radius: var(--radius);
+      background: rgba(210, 153, 34, 0.02);
     }
     .tips__title {
       font-family: var(--mono);
-      font-size: 0.7rem;
+      font-size: 0.75rem;
       color: var(--yellow);
       text-transform: uppercase;
       letter-spacing: 1px;
       margin-bottom: 0.75rem;
+      font-weight: 600;
     }
-    .tips ul { list-style: none; font-size: 0.85rem; color: var(--text-muted); }
-    .tips li { padding: 0.3rem 0; }
-    .tips li::before { content: '→ '; color: var(--yellow); }
+    .tips ul { list-style: none; font-size: 0.88rem; color: var(--text-muted); }
+    .tips li { padding: 0.4rem 0; position: relative; padding-left: 1.25rem; }
+    .tips li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: var(--yellow);
+      font-weight: bold;
+    }
 
     /* ── Leaderboard Table & Layout ── */
     .lb-filters {
@@ -709,8 +719,9 @@
     <div class="tips">
       <div class="tips__title">General Tips</div>
       <ul>
-        <li>Use browser DevTools (F12) to inspect active console pipelines.</li>
-        <li>Commit regularly following single logic milestone updates.</li>
+        <li>Use browser DevTools (F12 or right-click → Inspect) to monitor Console warnings and troubleshoot dynamic script fetch issues.</li>
+        <li>Validate that your JSON file structure matches the technical schemas exactly (ensure commas and quote formats are precise).</li>
+        <li>Commit your workflow changes into your GitHub repository milestones cleanly before firing your production build pages validation logic.</li>
       </ul>
     </div>
 
